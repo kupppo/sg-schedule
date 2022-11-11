@@ -38,9 +38,11 @@ a {
   transition: color 0.15s ease-in-out, text-decoration-color 0.15s ease-in-out;
 }
 
-a:hover {
-  color: #AAFFEC;
-  text-decoration-color: #AAFFEC;
+@media (hover: hover) {
+  a:hover {
+    color: #AAFFEC;
+    text-decoration-color: #AAFFEC;
+  }
 }
 
 .dash {
