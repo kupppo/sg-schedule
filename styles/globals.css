@@ -1,0 +1,145 @@
+:root {
+  --color-fg: #000;
+  --color-bg: #fff;
+  --color-mid: #666;
+  --space: 8px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-fg: #fff;
+    --color-bg: #000;
+  }
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  color: var(--color-fg);
+  background-color: var(--color-bg);
+  font-size: 16px;
+  line-height: 16px;
+  letter-spacing: -0.011em;
+}
+
+h1 {
+  font-size: 32px;
+  line-height: 32px;
+  margin: 0 0 32px;
+  font-weight: normal;
+}
+
+a {
+  color: #29BC9B;
+  text-underline-offset: 3px;
+  transition: color 0.15s ease-in-out, text-decoration-color 0.15s ease-in-out;
+}
+
+a:hover {
+  color: #AAFFEC;
+  text-decoration-color: #AAFFEC;
+}
+
+.dash {
+  color: var(--color-mid);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.container {
+  max-width: 900px;
+  margin: 72px auto;
+  padding: 0;
+}
+
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  margin-top: 72px;
+}
+
+table thead th {
+  text-align: left;
+  padding-bottom: calc(var(--space) * 3);
+  border-bottom: 1px solid var(--color-fg);
+  font-weight: normal;
+}
+
+table tbody td {
+  padding: calc(var(--space) * 3) 0;
+  border-bottom: 1px solid var(--color-fg);
+}
+
+.mobile-label {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .container {
+    margin-top: 32px;
+    margin-bottom: 32px;
+    padding: 0 16px;
+  }
+
+  h1 {
+    margin-bottom: 0;
+  }
+
+  table {
+    display: block;
+    width: 100%;
+    margin-top: 0;
+  }
+
+  table thead th {
+    display: none;
+  }
+
+  table tbody {
+    display: block;
+    width: 100%;
+  }
+
+  table tbody tr {
+    width: 100%;
+    display: block;
+  }
+
+  table tbody td {
+    display: block;
+    padding: 16px 0;
+    width: 100%;
+    border-bottom: 0;
+  }
+
+  table tbody td:first-child {
+    border-top: 1px solid var(--color-fg);
+    padding-top: 32px;
+    margin-top: 32px;
+  }
+
+  table tbody tr:first-child td:first-child {
+    border-top: 0;
+    margin-top: 0;
+  }
+
+  .mobile-label {
+    display: block;
+    color: var(--color-mid);
+    font-size: 16px;
+    line-height: 16px;
+    margin-bottom: 8px;
+  }
+}
