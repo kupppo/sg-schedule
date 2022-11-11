@@ -81,5 +81,6 @@ export async function getStaticProps() {
     props: {
       races,
     },
+    revalidate: 1,
   }
 }
