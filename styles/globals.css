@@ -116,7 +116,36 @@ table tbody td {
 
   table tbody tr {
     width: 100%;
-    display: block;
+    display: flex;
+    flex-wrap: wrap;
+    border-top: 1px solid var(--color-fg);
+    margin-top: 32px;
+    padding-top: 16px;
+  }
+
+  table tbody td.column_players {
+    width: 100%;
+    order: 0;
+  }
+
+  table tbody td.column_time {
+    width: 50%;
+    order: 1;
+  }
+
+  table tbody td.column_channel {
+    width: 50%;
+    order: 2;
+  }
+
+  table tbody td.column_commentary {
+    width: 50%;
+    order: 3;
+  }
+
+  table tbody td.column_tracking {
+    width: 50%;
+    order: 4;
   }
 
   table tbody td {
@@ -124,17 +153,6 @@ table tbody td {
     padding: 16px 0;
     width: 100%;
     border-bottom: 0;
-  }
-
-  table tbody td:first-child {
-    border-top: 1px solid var(--color-fg);
-    padding-top: 32px;
-    margin-top: 32px;
-  }
-
-  table tbody tr:first-child td:first-child {
-    border-top: 0;
-    margin-top: 0;
   }
 
   .mobile-label {

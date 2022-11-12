@@ -51,25 +51,25 @@ export default function Home({ races = [] }: HomeProps) {
             const time = getLocalRaceTime(race.datetime, tz)
             return (
               <tr key={i}>
-                <td>
+                <td className="column_time">
                   <Label>Time</Label>
                   {time}
                 </td>
-                <td>
+                <td className="column_players">
                   <Label>Players</Label>
                   {race.runners?.join(' vs ')}
                 </td>
-                <td>
+                <td className="column_channel">
                   <Label>Channel</Label>
                   {race.channel ? (
                   <a href={race.channel.url}>{race.channel.name}</a>
                   ) : <Dash />}
                 </td>
-                <td>
+                <td className="column_commentary">
                   <Label>Commentary</Label>
                   {race.commentary?.join(', ') || <Dash />}
                 </td>
-                <td>
+                <td className="column_tracking">
                   <Label>Tracking</Label>
                   {race.tracking?.join(', ') || <Dash />}
                 </td>
