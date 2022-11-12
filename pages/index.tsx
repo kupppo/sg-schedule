@@ -11,17 +11,24 @@ export type HomeProps = {
   races: Race[]
 }
 
-const getRaceTime = (time: string, tz: string) => {
+const getLocalRaceTime = (time: string, tz: string) => {
   try {
-    return formatDateTime(utcToZonedTime(time, tz), 'MMM d, h:mm a')
+    const zonedTime = utcToZonedTime(time, tz)
+    return formatDateTime(zonedTime, 'MMM d, h:mm a')
   } catch (err) {
-    return '-'
+    return <Dash />
   }
 }
 
 const Dash = () => (
   <span className="dash">&mdash;</span>
 )
+
+const Label = (props: React.PropsWithChildren) => {
+  return (
+    <span className="mobile-label">{props.children}</span>
+  )
+}
 
 export default function Home({ races = [] }: HomeProps) {
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -41,29 +48,29 @@ export default function Home({ races = [] }: HomeProps) {
         <tbody>
           {races.map((race, i) => {
             // @ts-ignore
-            const time = getRaceTime(race.datetime, tz)
+            const time = getLocalRaceTime(race.datetime, tz)
             return (
               <tr key={i}>
                 <td>
-                  <span className="mobile-label">Time</span>
+                  <Label>Time</Label>
                   {time}
                 </td>
                 <td>
-                  <span className="mobile-label">Players</span>
+                  <Label>Players</Label>
                   {race.runners?.join(' vs ')}
                 </td>
                 <td>
-                  <span className="mobile-label">Channel</span>
+                  <Label>Channel</Label>
                   {race.channel ? (
                   <a href={race.channel.url}>{race.channel.name}</a>
                   ) : <Dash />}
                 </td>
                 <td>
-                  <span className="mobile-label">Commentary</span>
+                  <Label>Commentary</Label>
                   {race.commentary?.join(', ') || <Dash />}
                 </td>
                 <td>
-                  <span className="mobile-label">Tracking</span>
+                  <Label>Tracking</Label>
                   {race.tracking?.join(', ') || <Dash />}
                 </td>
               </tr>
