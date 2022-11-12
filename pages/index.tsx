@@ -90,6 +90,6 @@ export async function getStaticProps() {
     props: {
       races,
     },
-    revalidate: 1,
+    revalidate: 10,
   }
 }
