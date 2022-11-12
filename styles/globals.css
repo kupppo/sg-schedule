@@ -140,6 +140,7 @@ table tbody td {
 
   table tbody td.column_commentary {
     width: 50%;
+    padding-right: 16px;
     order: 3;
   }
 

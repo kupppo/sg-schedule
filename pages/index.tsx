@@ -62,7 +62,9 @@ export default function Home({ races = [] }: HomeProps) {
                 <td className="column_channel">
                   <Label>Channel</Label>
                   {race.channel ? (
-                  <a href={race.channel.url}>{race.channel.name}</a>
+                  <a href={race.channel.url} target="_blank" rel="noopenner noreferrer">
+                    {race.channel.name}
+                  </a>
                   ) : <Dash />}
                 </td>
                 <td className="column_commentary">
