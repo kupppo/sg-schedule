@@ -15,7 +15,10 @@
       "CountCranberry",
       "PapaSchmo"
     ],
-    "channel": null,
+    "channel": {
+      "name": "SpeedGaming2",
+      "url": "https://www.twitch.tv/speedgaming2"
+    },
     "commentary": [],
     "tracking": [
       "JestroZooks"

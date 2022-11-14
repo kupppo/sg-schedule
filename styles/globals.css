@@ -3,6 +3,8 @@
   --color-bg: #fff;
   --color-mid: #666;
   --space: 8px;
+  --color-highlight: #29BC9B;
+  --color-highlight-active: #AAFFEC;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -33,15 +35,15 @@ h1 {
 }
 
 a {
-  color: #29BC9B;
+  color: var(--color-highlight);
   text-underline-offset: 3px;
   transition: color 0.15s ease-in-out, text-decoration-color 0.15s ease-in-out;
 }
 
 @media (hover: hover) {
   a:hover {
-    color: #AAFFEC;
-    text-decoration-color: #AAFFEC;
+    color: var(--color-highlight-active);
+    text-decoration-color: var(--color-highlight-active);
   }
 }
 
@@ -78,6 +80,20 @@ table tbody td {
   border-bottom: 1px solid var(--color-fg);
 }
 
+table tbody td.column_time {
+  width: 1%;
+  white-space: nowrap;
+}
+
+table tbody td.column_live {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.column-inner {
+  padding-right: 16px;
+}
+
 table tbody tr:last-child td {
   border-bottom: 0;
 }
@@ -86,13 +102,31 @@ table tbody tr:last-child td {
   display: none;
 }
 
+.heading_live span {
+  visibility: hidden;
+}
+
+.live {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 16px;
+  background-color: var(--color-highlight);
+  text-transform: uppercase;
+  font-size: 10px;
+  line-height: 1;
+  letter-spacing: 0.05em;
+  position: relative;
+  top: -2px;
+  color: var(--color-bg);
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
   }
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 900px) {
   .container {
     margin-top: 32px;
     margin-bottom: 32px;
@@ -129,28 +163,34 @@ table tbody tr:last-child td {
 
   table tbody td.column_players {
     width: 100%;
+    order: 1;
+  }
+
+  table tbody td.column_live {
+    width: 50%;
     order: 0;
+    padding-bottom: 0;
   }
 
   table tbody td.column_time {
     width: 50%;
-    order: 1;
+    order: 2;
   }
 
   table tbody td.column_channel {
     width: 50%;
-    order: 2;
+    order: 3;
   }
 
   table tbody td.column_commentary {
     width: 50%;
     padding-right: 16px;
-    order: 3;
+    order: 4;
   }
 
   table tbody td.column_tracking {
     width: 50%;
-    order: 4;
+    order: 5;
   }
 
   table tbody td {

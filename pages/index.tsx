@@ -40,6 +40,12 @@ const Label = (props: React.PropsWithChildren) => {
   )
 }
 
+const Live = () => {
+  return (
+    <span className="live">Live</span>
+  )
+}
+
 export default function Home({ races = [] }: HomeProps) {
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
   return (
@@ -49,6 +55,7 @@ export default function Home({ races = [] }: HomeProps) {
         <thead>
           <tr>
             <th>Time</th>
+            <th className="heading_live"><span>Live</span></th>
             <th>Players</th>
             <th>Channel</th>
             <th>Commentary</th>
@@ -62,10 +69,17 @@ export default function Home({ races = [] }: HomeProps) {
             // @ts-ignore
             const live = getLiveStatus(race.datetime)
             return (
-              <tr key={i} className={live ? "live" : ""}>
+              <tr key={i}>
                 <td className="column_time">
-                  <Label>Time</Label>
-                  {time}
+                  <div className="column-inner">
+                    <Label>Time</Label>
+                    {time}
+                  </div>
+                </td>
+                <td className="column_live">
+                  <div className="column-inner">
+                    {live && <Live />}
+                  </div>
                 </td>
                 <td className="column_players">
                   <Label>Players</Label>
