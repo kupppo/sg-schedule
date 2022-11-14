@@ -3,7 +3,6 @@ import { isAfter, parseISO } from 'date-fns'
 import { format as formatDateTime, utcToZonedTime } from 'date-fns-tz'
 import { Inter } from '@next/font/google'
 import useSWR from 'swr'
-import { useEffect, useState } from 'react'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -57,6 +56,7 @@ export default function Home({ initialRaces = [] }: HomeProps) {
   const { data: races } = useSWR('/api/races', fetcher, {
     fallbackData: initialRaces,
     refreshInterval: 30000,
+    revalidateOnMount: true,
   })
 
   return (
