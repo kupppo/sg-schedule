@@ -1,4 +1,5 @@
 import { fetchCurrentRaces, Race } from 'lib/scraper'
+import { isAfter, parseISO } from 'date-fns'
 import { format as formatDateTime, utcToZonedTime } from 'date-fns-tz'
 import { Inter } from '@next/font/google'
 
@@ -17,6 +18,15 @@ const getLocalRaceTime = (time: string, tz: string) => {
     return formatDateTime(zonedTime, 'MMM d, h:mm a')
   } catch (err) {
     return <Dash />
+  }
+}
+
+const getLiveStatus = (time: string) => {
+  try {
+    const now = new Date()
+    return isAfter(now, parseISO(time))
+  } catch (err) {
+    return false
   }
 }
 
@@ -49,8 +59,10 @@ export default function Home({ races = [] }: HomeProps) {
           {races.map((race, i) => {
             // @ts-ignore
             const time = getLocalRaceTime(race.datetime, tz)
+            // @ts-ignore
+            const live = getLiveStatus(race.datetime)
             return (
-              <tr key={i}>
+              <tr key={i} className={live ? "live" : ""}>
                 <td className="column_time">
                   <Label>Time</Label>
                   {time}

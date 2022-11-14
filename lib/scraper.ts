@@ -1,6 +1,7 @@
 import * as Cheerio from 'cheerio'
 import { parse as parseDateTime } from 'date-fns'
 import { zonedTimeToUtc } from 'date-fns-tz'
+import MOCKS from 'data/mock-schedule.json'
 
 function cleanText(input: string) {
   return input.replace(/(\n|\t)+/g, '').trim()
@@ -42,6 +43,7 @@ function parseCellContents (
       return cleanText(Cheerio.load(contents).text())
         .split(', ')
         .map((commentator) => commentator.trim())
+        .filter((commentator) => commentator.length)
     default:
       return null
   }
@@ -61,6 +63,11 @@ export type TwitchChannel = {
 }
 
 export const fetchCurrentRaces: any = async () => {
+  const useMocks = process.env.USE_MOCKS
+  if (useMocks) {
+    return MOCKS
+  }
+
   const races: Race[] = []
   const HEADINGS = ['datetime', 'runners', 'channel', 'commentary', 'tracking']
   const url = new URL('https://schedule.speedgaming.org/choozo/')
