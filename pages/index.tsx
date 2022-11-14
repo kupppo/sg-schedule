@@ -2,6 +2,8 @@ import { fetchCurrentRaces, Race } from 'lib/scraper'
 import { isAfter, parseISO } from 'date-fns'
 import { format as formatDateTime, utcToZonedTime } from 'date-fns-tz'
 import { Inter } from '@next/font/google'
+import useSWR from 'swr'
+import { useEffect, useState } from 'react'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -9,7 +11,7 @@ const inter = Inter({
 })
 
 export type HomeProps = {
-  races: Race[]
+  initialRaces: Race[]
 }
 
 const getLocalRaceTime = (time: string, tz: string) => {
@@ -46,8 +48,17 @@ const Live = () => {
   )
 }
 
-export default function Home({ races = [] }: HomeProps) {
+const fetcher = (url: string) =>
+  fetch(url)
+  .then(r => r.json())
+
+export default function Home({ initialRaces = [] }: HomeProps) {
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
+  const { data: races } = useSWR('/api/races', fetcher, {
+    fallbackData: initialRaces,
+    refreshInterval: 30000,
+  })
+
   return (
     <main className={`container ${inter.className}`}>
       <h1>Super Metroid Choozo Randomizer<br />2022 Schedule</h1>
@@ -63,7 +74,7 @@ export default function Home({ races = [] }: HomeProps) {
           </tr>
         </thead>
         <tbody>
-          {races.map((race, i) => {
+          {races?.map((race: Race, i: number) => {
             // @ts-ignore
             const time = getLocalRaceTime(race.datetime, tz)
             // @ts-ignore
@@ -114,7 +125,7 @@ export async function getStaticProps() {
   const races:Promise<Race[]> = await fetchCurrentRaces()
   return {
     props: {
-      races,
+      initialRaces: races,
     },
     revalidate: 10,
   }
