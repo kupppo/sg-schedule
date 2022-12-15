@@ -1,9 +1,17 @@
 .header {
   display: flex;
+  flex-wrap: wrap;
 }
 
 .header h1 {
   width: 80%;
+}
+
+@media only screen and (max-width: 900px) {
+  .header h1 {
+    width: 100%;
+    margin-bottom: 1em;
+  }
 }
 
 .menu {
@@ -24,8 +32,8 @@
   border-radius: 4px;
   padding: 8px 1em;
   text-decoration: none;
-  border: 1px solid transparent;
   text-align: center;
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
 .menu a:hover {
