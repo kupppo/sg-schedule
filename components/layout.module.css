@@ -1,0 +1,38 @@
+.header {
+  display: flex;
+}
+
+.header h1 {
+  width: 80%;
+}
+
+.menu {
+  width: 20%;
+  padding: 0;
+  margin: 0;
+}
+
+.menu ul {
+  list-style: none outside none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+.menu a {
+  display: block;
+  border-radius: 4px;
+  padding: 8px 1em;
+  text-decoration: none;
+  border: 1px solid transparent;
+  text-align: center;
+}
+
+.menu a:hover {
+  color: var(--color-fg);
+}
+
+.menu .active a {
+  color: var(--color-bg);
+  background-color: var(--color-highlight);
+}

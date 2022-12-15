@@ -1,13 +1,8 @@
 import { fetchCurrentRaces, Race } from 'lib/scraper'
 import { isAfter, parseISO } from 'date-fns'
 import { format as formatDateTime, utcToZonedTime } from 'date-fns-tz'
-import { Inter } from '@next/font/google'
+import Layout from 'components/layout'
 import useSWR from 'swr'
-
-const inter = Inter({
-  subsets: ['latin'],
-  display: 'swap'
-})
 
 export type HomeProps = {
   initialRaces: Race[]
@@ -60,8 +55,7 @@ export default function Home({ initialRaces = [] }: HomeProps) {
   })
 
   return (
-    <main className={`container ${inter.className}`}>
-      <h1>Super Metroid Choozo Randomizer<br />2022 Schedule</h1>
+    <Layout>
       <table>
         <thead>
           <tr>
@@ -117,7 +111,7 @@ export default function Home({ initialRaces = [] }: HomeProps) {
           })}
         </tbody>
       </table>
-    </main>
+    </Layout>
   )
 }
 
