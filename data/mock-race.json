@@ -1,0 +1,29 @@
+{
+  "id": 1,
+  "name": "kupppo vs CountCranberry",
+  "raceTime": "2022-12-12T14:00:00.000Z",
+  "settings": {
+    "area": "full",
+    "boss": "vanilla",
+    "items": "random",
+    "morph": "early",
+    "start": "vanilla"
+  },
+  "channel": "SpeedGaming2",
+  "vod": "https://www.twitch.tv/videos/1234567890",
+  "week": 6,
+  "createdAt": null,
+  "updatedAt": null,
+  "contributors": [
+    {
+      "id": 3,
+      "name": "BajaBlood",
+      "role": "commentary"
+    },
+    {
+      "id": 3,
+      "name": "BajaBlood",
+      "role": "tracking"
+    }
+  ]
+}
