@@ -1,4 +1,5 @@
 import * as Cheerio from 'cheerio'
+import getNow from 'helpers/now'
 import { parse as parseDateTime } from 'date-fns'
 import { zonedTimeToUtc } from 'date-fns-tz'
 import MOCKS from 'data/mock-schedule.json'
@@ -16,11 +17,16 @@ function parseCellContents (
       const value = cleanText(Cheerio.load(contents).text())
         .replace(/\u00A0/g, ' ')
         .trim()
+      const now = getNow()
       const origin = parseDateTime(
         value,
         'EEE MMM dd, hh:mm a',
-        new Date()
+        now
       )
+      const nextYear = now.getMonth() > origin.getMonth() && now.getDay() > origin.getDay()
+      if (nextYear) {
+        origin.setFullYear(origin.getFullYear() + 1)
+      }
       const time = zonedTimeToUtc(origin, 'America/New_York')
       return time.toISOString()
     case 'channel':

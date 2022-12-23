@@ -2,6 +2,7 @@ import { fetchCurrentRaces, Race } from 'lib/scraper'
 import { isAfter, parseISO } from 'date-fns'
 import { format as formatDateTime, utcToZonedTime } from 'date-fns-tz'
 import { Inter } from '@next/font/google'
+import getNow from 'helpers/now'
 import useSWR from 'swr'
 
 const inter = Inter({
@@ -24,7 +25,7 @@ const getLocalRaceTime = (time: string, tz: string) => {
 
 const getLiveStatus = (time: string) => {
   try {
-    const now = new Date()
+    const now = getNow()
     return isAfter(now, parseISO(time))
   } catch (err) {
     return false
