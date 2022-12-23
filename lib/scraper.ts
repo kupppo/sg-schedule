@@ -49,7 +49,7 @@ function parseCellContents (
   }
 }
 
-export type Race = {
+export type UpcomingRace = {
   runners?: string[] | null
   datetime?: string | null
   channel?: TwitchChannel | null
@@ -68,7 +68,7 @@ export const fetchCurrentRaces: any = async () => {
     return MOCKS
   }
 
-  const races: Race[] = []
+  const races: UpcomingRace[] = []
   const HEADINGS = ['datetime', 'runners', 'channel', 'commentary', 'tracking']
   const url = new URL('https://schedule.speedgaming.org/choozo/')
   const res = await fetch(url.href)
@@ -76,9 +76,9 @@ export const fetchCurrentRaces: any = async () => {
   page('table tbody tr').each((rowIndex, rowEl) => {
     if (rowIndex !== 0) {
       const row = page(rowEl)
-      const race = Object.fromEntries(HEADINGS.map((heading) => [heading, null])) as Race
+      const race = Object.fromEntries(HEADINGS.map((heading) => [heading, null])) as UpcomingRace
       row.children('td').each((index, cell: Cheerio.Element) => {
-        const type = HEADINGS[index] as keyof Race
+        const type = HEADINGS[index] as keyof UpcomingRace
         const content = parseCellContents(cell, type)
         // @ts-ignore
         race[type] = content

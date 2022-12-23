@@ -1,34 +1,12 @@
-import { fetchCurrentRaces, Race } from 'lib/scraper'
-import { isAfter, parseISO } from 'date-fns'
-import { format as formatDateTime, utcToZonedTime } from 'date-fns-tz'
+import { fetchCurrentRaces, UpcomingRace } from 'lib/scraper'
+import Dash from 'components/dash'
+import { getLocalRaceTime, getLiveStatus } from 'helpers/race'
 import Layout from 'components/layout'
 import useSWR from 'swr'
 
 export type HomeProps = {
-  initialRaces: Race[]
+  initialRaces: UpcomingRace[]
 }
-
-const getLocalRaceTime = (time: string, tz: string) => {
-  try {
-    const zonedTime = utcToZonedTime(time, tz)
-    return formatDateTime(zonedTime, 'MMM d, h:mm a')
-  } catch (err) {
-    return <Dash />
-  }
-}
-
-const getLiveStatus = (time: string) => {
-  try {
-    const now = new Date()
-    return isAfter(now, parseISO(time))
-  } catch (err) {
-    return false
-  }
-}
-
-const Dash = () => (
-  <span className="dash">&mdash;</span>
-)
 
 const Label = (props: React.PropsWithChildren) => {
   return (
@@ -47,7 +25,6 @@ const fetcher = (url: string) =>
   .then(r => r.json())
 
 export default function Home({ initialRaces = [] }: HomeProps) {
-  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
   const { data: races } = useSWR('/api/races', fetcher, {
     fallbackData: initialRaces,
     refreshInterval: 30000,
@@ -68,9 +45,9 @@ export default function Home({ initialRaces = [] }: HomeProps) {
           </tr>
         </thead>
         <tbody>
-          {races?.map((race: Race, i: number) => {
+          {races?.map((race: UpcomingRace, i: number) => {
             // @ts-ignore
-            const time = getLocalRaceTime(race.datetime, tz)
+            const time = getLocalRaceTime(race.datetime)
             // @ts-ignore
             const live = getLiveStatus(race.datetime)
             return (
@@ -78,7 +55,7 @@ export default function Home({ initialRaces = [] }: HomeProps) {
                 <td className="column_time">
                   <div className="column-inner">
                     <Label>Time</Label>
-                    {time}
+                    {time || <Dash />}
                   </div>
                 </td>
                 <td className="column_live">
@@ -116,7 +93,7 @@ export default function Home({ initialRaces = [] }: HomeProps) {
 }
 
 export async function getStaticProps() {
-  const races:Promise<Race[]> = await fetchCurrentRaces()
+  const races:Promise<UpcomingRace[]> = await fetchCurrentRaces()
   return {
     props: {
       initialRaces: races,

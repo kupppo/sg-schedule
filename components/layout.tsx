@@ -1,8 +1,7 @@
 import { Inter } from '@next/font/google'
-import type { PropsWithChildren } from 'react'
+import type { PropsWithChildren, ReactNode } from 'react'
 import styles from './layout.module.css'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 
 const MENU_ITEMS = [
   {
@@ -15,14 +14,12 @@ const MENU_ITEMS = [
   },
 ]
 
-const Menu = () => {
-  const router = useRouter()
-  const pathname = router?.pathname
+const Menu = ({ activeHref = '/' }) => {
   return (
     <menu className={styles['menu']}>
       <ul>
         {MENU_ITEMS.map((item) => {
-          const active = pathname.includes(item.href)
+          const active = activeHref === item.href
           return (
             <li key={item.href} className={active ? styles['active'] : ''}>
               <Link href={item.href}>
@@ -41,7 +38,12 @@ const inter = Inter({
   display: 'swap'
 })
 
-const Layout = (props: PropsWithChildren) => (
+export type LayoutProps = {
+  children: ReactNode
+  activeHref?: string
+}
+
+const Layout = ({ activeHref = '/', children }: LayoutProps) => (
   <div className={inter.className}>
     <header className={`${styles['header']} container`}>
       <h1>
@@ -49,10 +51,10 @@ const Layout = (props: PropsWithChildren) => (
         <br />
         2022 Schedule
       </h1>
-      <Menu />
+      <Menu activeHref={activeHref} />
     </header>
     <main className="container">
-      {props.children}
+      {children}
     </main>
   </div>
 )
