@@ -1,5 +1,6 @@
 import { isAfter, parseISO } from 'date-fns'
 import { format as formatDateTime, utcToZonedTime } from 'date-fns-tz'
+import getNow from './now'
 
 export type Settings = {
   area: 'full' | 'light' | 'vanilla'
@@ -21,7 +22,7 @@ export const getLocalRaceTime = (time: string) => {
 
 export const getLiveStatus = (time: string) => {
   try {
-    const now = new Date()
+    const now = getNow()
     return isAfter(now, parseISO(time))
   } catch (err) {
     return false
