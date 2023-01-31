@@ -8,6 +8,15 @@ function cleanText(input: string) {
   return input.replace(/(\n|\t)+/g, '').trim()
 }
 
+function isNextYear(now: Date, origin: Date) {
+  const prevMonth = now.getMonth() > origin.getMonth()
+  if (!prevMonth) {
+    return false
+  }
+
+  return true
+}
+
 function parseCellContents (
   contents: Cheerio.Element,
   type: string
@@ -23,11 +32,11 @@ function parseCellContents (
         'EEE MMM dd, hh:mm a',
         now
       )
-      const nextYear = now.getMonth() > origin.getMonth() && now.getDay() > origin.getDay()
-      if (nextYear) {
-        origin.setFullYear(origin.getFullYear() + 1)
-      }
       const time = zonedTimeToUtc(origin, 'America/New_York')
+      const nextYear = isNextYear(now, origin)
+      if (nextYear) {
+        time.setFullYear(time.getFullYear() + 1)
+      }
       return time.toISOString()
     case 'channel':
       // const text = cleanText(Cheerio.load(contents).text())
