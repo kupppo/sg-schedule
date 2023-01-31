@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "console": "prisma-repl",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -30,6 +31,7 @@
     "typescript": "4.8.4"
   },
   "devDependencies": {
-    "prisma": "^4.9.0"
+    "prisma": "^4.9.0",
+    "prisma-repl": "^1.4.0"
   }
 }
