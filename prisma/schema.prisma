@@ -42,3 +42,9 @@ model ContributorInRace {
 
   @@id([raceId, contributorId])
 }
+
+model User {
+  id               Int    @id @default(autoincrement())
+  permission_level String
+  discordName      String @unique
+}
