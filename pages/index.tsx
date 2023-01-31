@@ -63,61 +63,65 @@ export default function Home({ initialRaces = [] }: HomeProps) {
   return (
     <main className={`container ${inter.className}`}>
       <h1>Super Metroid Choozo Randomizer<br />2022 Schedule</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>Time</th>
-            <th className="heading_live"><span>Live</span></th>
-            <th>Players</th>
-            <th>Channel</th>
-            <th>Commentary</th>
-            <th>Tracking</th>
-          </tr>
-        </thead>
-        <tbody>
-          {races?.map((race: Race, i: number) => {
-            // @ts-ignore
-            const time = getLocalRaceTime(race.datetime, tz)
-            // @ts-ignore
-            const live = getLiveStatus(race.datetime)
-            return (
-              <tr key={i}>
-                <td className="column_time">
-                  <div className="column-inner">
-                    <Label>Time</Label>
-                    {time}
-                  </div>
-                </td>
-                <td className="column_live">
-                  <div className="column-inner">
-                    {live && <Live />}
-                  </div>
-                </td>
-                <td className="column_players">
-                  <Label>Players</Label>
-                  {race.runners?.join(' vs ')}
-                </td>
-                <td className="column_channel">
-                  <Label>Channel</Label>
-                  {race.channel ? (
-                  <a href={race.channel.url} target="_blank" rel="noopenner noreferrer">
-                    {race.channel.name}
-                  </a>
-                  ) : <Dash />}
-                </td>
-                <td className="column_commentary">
-                  <Label>Commentary</Label>
-                  {race.commentary?.join(', ') || <Dash />}
-                </td>
-                <td className="column_tracking">
-                  <Label>Tracking</Label>
-                  {race.tracking?.join(', ') || <Dash />}
-                </td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
+      {races.length ? (
+        <table>
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th className="heading_live"><span>Live</span></th>
+              <th>Players</th>
+              <th>Channel</th>
+              <th>Commentary</th>
+              <th>Tracking</th>
+            </tr>
+          </thead>
+          <tbody>
+            {races?.map((race: Race, i: number) => {
+              // @ts-ignore
+              const time = getLocalRaceTime(race.datetime, tz)
+              // @ts-ignore
+              const live = getLiveStatus(race.datetime)
+              return (
+                <tr key={i}>
+                  <td className="column_time">
+                    <div className="column-inner">
+                      <Label>Time</Label>
+                      {time}
+                    </div>
+                  </td>
+                  <td className="column_live">
+                    <div className="column-inner">
+                      {live && <Live />}
+                    </div>
+                  </td>
+                  <td className="column_players">
+                    <Label>Players</Label>
+                    {race.runners?.join(' vs ')}
+                  </td>
+                  <td className="column_channel">
+                    <Label>Channel</Label>
+                    {race.channel ? (
+                    <a href={race.channel.url} target="_blank" rel="noopenner noreferrer">
+                      {race.channel.name}
+                    </a>
+                    ) : <Dash />}
+                  </td>
+                  <td className="column_commentary">
+                    <Label>Commentary</Label>
+                    {race.commentary?.join(', ') || <Dash />}
+                  </td>
+                  <td className="column_tracking">
+                    <Label>Tracking</Label>
+                    {race.tracking?.join(', ') || <Dash />}
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      ) : (
+        <p>No races scheduled at this time.</p>
+      )}
     </main>
   )
 }
