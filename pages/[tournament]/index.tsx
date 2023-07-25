@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { fetchCurrentRaces, Race } from 'lib/scraper'
 import { isAfter, parseISO } from 'date-fns'
 import { format as formatDateTime, utcToZonedTime } from 'date-fns-tz'
@@ -133,6 +134,12 @@ export default function Home({
       ) : (
         <p>No races scheduled at this time.</p>
       )}
+      <footer style={{ borderTop: '1px solid #333', marginTop: '2em', paddingTop: '2em' }}>
+        {/* If the races table exists, add extra margin for consistent spacing */}
+        <p style={{ marginTop: races.length ? '1em' : '0' }}>
+          <Link href="/">View other tournaments</Link>
+        </p>
+      </footer>
     </main>
   )
 }
