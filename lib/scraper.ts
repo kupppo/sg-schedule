@@ -77,7 +77,7 @@ export type TwitchChannel = {
   url: string
 }
 
-export const fetchCurrentRaces: any = async () => {
+export const fetchCurrentRaces: any = async (tournament: string) => {
   const useMocks = process.env.USE_MOCKS
   if (useMocks) {
     return MOCKS
@@ -85,7 +85,7 @@ export const fetchCurrentRaces: any = async () => {
 
   const races: Race[] = []
   const HEADINGS = ['datetime', 'runners', 'channel', 'commentary', 'tracking']
-  const url = new URL('https://schedule.speedgaming.org/choozo/')
+  const url = new URL(`https://schedule.speedgaming.org/${tournament}/`)
   const res = await fetch(url.href)
   const page = Cheerio.load(await res.text())
   page('table tbody tr').each((rowIndex, rowEl) => {
