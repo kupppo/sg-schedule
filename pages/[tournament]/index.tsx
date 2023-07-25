@@ -4,6 +4,9 @@ import { format as formatDateTime, utcToZonedTime } from 'date-fns-tz'
 import { Inter } from '@next/font/google'
 import getNow from 'helpers/now'
 import useSWR from 'swr'
+import { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from 'next'
+import { ParsedUrlQuery } from 'querystring'
+import tournaments from 'data/tournaments.json'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -12,6 +15,9 @@ const inter = Inter({
 
 export type HomeProps = {
   initialRaces: Race[]
+  tournament: string
+  title: string
+  secondary: string
 }
 
 const getLocalRaceTime = (time: string, tz: string) => {
@@ -52,9 +58,14 @@ const fetcher = (url: string) =>
   fetch(url)
   .then(r => r.json())
 
-export default function Home({ initialRaces = [] }: HomeProps) {
+export default function Home({
+  initialRaces = [],
+  tournament,
+  title,
+  secondary,
+}: HomeProps) {
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
-  const { data: races } = useSWR('/api/races', fetcher, {
+  const { data: races } = useSWR(`/api/${tournament}/races`, fetcher, {
     fallbackData: initialRaces,
     refreshInterval: 30000,
     revalidateOnMount: true,
@@ -62,7 +73,7 @@ export default function Home({ initialRaces = [] }: HomeProps) {
 
   return (
     <main className={`container ${inter.className}`}>
-      <h1>Super Metroid Choozo Randomizer<br />2022 Schedule</h1>
+      <h1>{title}<br />{secondary}</h1>
       {races.length ? (
         <table>
           <thead>
@@ -126,12 +137,35 @@ export default function Home({ initialRaces = [] }: HomeProps) {
   )
 }
 
-export async function getStaticProps() {
-  const races:Promise<Race[]> = await fetchCurrentRaces()
+interface Params extends ParsedUrlQuery {
+  tournament: string;
+}
+
+export const getStaticProps: GetStaticProps = async (context: GetStaticPropsContext) => {
+  const { tournament } = context.params as Params
+  const races:Promise<Race[]> = await fetchCurrentRaces(tournament as string)
+  const data = tournaments.find(t => t.key === tournament)
   return {
     props: {
       initialRaces: races,
+      tournament,
+      title: data?.title,
+      secondary: data?.secondary,
     },
     revalidate: 10,
+  }
+}
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const paths = tournaments.map(t => ({
+    params: {
+      tournament: t.key,
+      title: t.title,
+      secondary: t.secondary
+    }
+  }))
+  return {
+    paths,
+    fallback: true,
   }
 }
