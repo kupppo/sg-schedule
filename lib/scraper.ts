@@ -23,21 +23,27 @@ function parseCellContents (
 ): string | string[] | Date | TwitchChannel | null {
   switch (type) {
     case 'datetime':
-      const value = cleanText(Cheerio.load(contents).text())
-        .replace(/\u00A0/g, ' ')
-        .trim()
-      const now = getNow()
-      const origin = parseDateTime(
-        value,
-        'EEE MMM dd, hh:mm a',
-        now
-      )
-      const time = zonedTimeToUtc(origin, 'America/New_York')
-      const nextYear = isNextYear(now, origin)
-      if (nextYear) {
-        time.setFullYear(time.getFullYear() + 1)
+      try {
+        const value = cleanText(Cheerio.load(contents).text())
+          .replace(/\u00A0/g, ' ')
+          .trim()
+        const now = getNow()
+        const origin = parseDateTime(
+          value,
+          'EEE MMM dd, hh:mm a',
+          now
+        )
+        const time = zonedTimeToUtc(origin, 'America/New_York')
+        const nextYear = isNextYear(now, origin)
+        if (nextYear) {
+          time.setFullYear(time.getFullYear() + 1)
+        }
+        return time.toISOString()
+      } catch (err:unknown) {
+        const error = err as Error
+        console.error(error)
+        return null
       }
-      return time.toISOString()
     case 'channel':
       // const text = cleanText(Cheerio.load(contents).text())
       // const channelName = 
@@ -64,6 +70,13 @@ function parseCellContents (
   }
 }
 
+async function getPage(tournament: string) {
+  const url = new URL(`https://schedule.speedgaming.org/${tournament}/`)
+  const res = await fetch(url.href)
+  const page = Cheerio.load(await res.text())
+  return page
+}
+
 export type Race = {
   runners?: string[] | null
   datetime?: string | null
@@ -85,9 +98,7 @@ export const fetchCurrentRaces: any = async (tournament: string) => {
 
   const races: Race[] = []
   const HEADINGS = ['datetime', 'runners', 'channel', 'commentary', 'tracking']
-  const url = new URL(`https://schedule.speedgaming.org/${tournament}/`)
-  const res = await fetch(url.href)
-  const page = Cheerio.load(await res.text())
+  const page = await getPage(tournament)
   page('table tbody tr').each((rowIndex, rowEl) => {
     if (rowIndex !== 0) {
       const row = page(rowEl)
@@ -98,8 +109,23 @@ export const fetchCurrentRaces: any = async (tournament: string) => {
         // @ts-ignore
         race[type] = content
       })
-      races.push(race)
+      if (race.runners !== null && race.datetime !== null) {
+        races.push(race)
+      }
     }
   })
+  console.log(races)
   return races
+}
+
+export const getTitle = async (tournament: string):Promise<string|null> => {
+  try {
+    const page = await getPage(tournament)
+    const title = page('h1').text().trim()
+    return title
+  } catch (err: unknown) {
+    const error = err as Error
+    console.error(error)
+    return null
+  }
 }
