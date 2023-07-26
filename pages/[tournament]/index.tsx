@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { fetchCurrentRaces, Race } from 'lib/scraper'
+import { fetchCurrentRaces, getTitle, Race } from 'lib/scraper'
 import { isAfter, parseISO } from 'date-fns'
 import { format as formatDateTime, utcToZonedTime } from 'date-fns-tz'
 import { Inter } from '@next/font/google'
@@ -8,17 +8,18 @@ import useSWR from 'swr'
 import { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from 'next'
 import { ParsedUrlQuery } from 'querystring'
 import tournaments from 'data/tournaments.json'
+import { useRouter } from 'next/router'
 
 const inter = Inter({
   subsets: ['latin'],
   display: 'swap'
 })
 
-export type HomeProps = {
+export type TournamentPageProps = {
   initialRaces: Race[]
   tournament: string
   title: string
-  secondary: string
+  secondary?: string
 }
 
 const getLocalRaceTime = (time: string, tz: string) => {
@@ -59,18 +60,23 @@ const fetcher = (url: string) =>
   fetch(url)
   .then(r => r.json())
 
-export default function Home({
+export default function TournamentPage({
   initialRaces = [],
   tournament,
   title,
   secondary,
-}: HomeProps) {
+}: TournamentPageProps) {
+  const router = useRouter()
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
   const { data: races } = useSWR(`/api/${tournament}/races`, fetcher, {
     fallbackData: initialRaces,
     refreshInterval: 30000,
     revalidateOnMount: true,
   })
+
+  if (router.isFallback) {
+    return <p>Loading...</p>
+  }
 
   return (
     <main className={`container ${inter.className}`}>
@@ -150,15 +156,26 @@ interface Params extends ParsedUrlQuery {
 
 export const getStaticProps: GetStaticProps = async (context: GetStaticPropsContext) => {
   const { tournament } = context.params as Params
+  console.log('tournament', tournament)
   const races:Promise<Race[]> = await fetchCurrentRaces(tournament as string)
-  const data = tournaments.find(t => t.key === tournament)
+  
+  let data = tournaments.find(t => t.key === tournament)
+  let title = data?.title
+  if (!title) {
+    title = await getTitle(tournament as string)
+  }
+  const secondary = data?.secondary || null
+  console.log('secondary', secondary)
+
+  const props = {
+    initialRaces: races,
+    tournament,
+    title,
+    secondary,
+  }
+
   return {
-    props: {
-      initialRaces: races,
-      tournament,
-      title: data?.title,
-      secondary: data?.secondary,
-    },
+    props,
     revalidate: 10,
   }
 }
