@@ -115,9 +115,14 @@ export const fetchCurrentRaces: any = async (tournament: string) => {
   return races
 }
 
-export const getTitle = async (tournament: string) => {
-  const page = await getPage(tournament)
-  const title = page('h1')[0]
-  console.log(title)
-  return 'wah'
+export const getTitle = async (tournament: string):Promise<string|null> => {
+  try {
+    const page = await getPage(tournament)
+    const title = page('h1').text().trim()
+    return title
+  } catch (err: unknown) {
+    const error = err as Error
+    console.error(error)
+    return null
+  }
 }

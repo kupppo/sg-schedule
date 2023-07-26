@@ -156,17 +156,16 @@ interface Params extends ParsedUrlQuery {
 
 export const getStaticProps: GetStaticProps = async (context: GetStaticPropsContext) => {
   const { tournament } = context.params as Params
-  console.log('tournament', tournament)
   const races:Promise<Race[]> = await fetchCurrentRaces(tournament as string)
   
   let data = tournaments.find(t => t.key === tournament)
   let title = data?.title
   if (!title) {
+    // @ts-ignore
     title = await getTitle(tournament as string)
   }
   const secondary = data?.secondary || null
-  console.log('secondary', secondary)
-
+  
   const props = {
     initialRaces: races,
     tournament,
