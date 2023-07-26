@@ -109,9 +109,12 @@ export const fetchCurrentRaces: any = async (tournament: string) => {
         // @ts-ignore
         race[type] = content
       })
-      races.push(race)
+      if (race.runners !== null && race.datetime !== null) {
+        races.push(race)
+      }
     }
   })
+  console.log(races)
   return races
 }
 
