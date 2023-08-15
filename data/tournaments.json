@@ -10,5 +10,11 @@
     "title": "SGLive 2023 Super Metroid Randomizer",
     "secondary": "Schedule",
     "active": true
+  },
+  {
+    "key": "sgl23sm100",
+    "title": "SGLive 2023 Super Metroid 100%",
+    "secondary": "Schedule",
+    "active": true
   }
 ]
