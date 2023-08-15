@@ -1,17 +1,10 @@
 :root {
-  --color-fg: #000;
-  --color-bg: #fff;
+  --color-fg: #fff;
+  --color-bg: #000;
   --color-mid: #666;
   --space: 8px;
   --color-highlight: #29BC9B;
   --color-highlight-active: #AAFFEC;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-fg: #fff;
-    --color-bg: #000;
-  }
 }
 
 html,
