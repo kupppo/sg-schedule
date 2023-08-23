@@ -8,10 +8,12 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "prisma:dev": "dotenv -e .env.local -- prisma",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "@prisma/client": "^5.2.0",
     "@upstash/qstash": "^0.3.6",
     "@vercel/analytics": "^1.0.2",
     "cheerio": "^1.0.0-rc.12",
@@ -28,7 +30,9 @@
     "@types/node": "^20.5.3",
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.7",
+    "dotenv-cli": "^7.3.0",
     "eslint": "^8.47.0",
-    "eslint-config-next": "^13.4.19"
+    "eslint-config-next": "^13.4.19",
+    "prisma": "^5.2.0"
   }
 }
