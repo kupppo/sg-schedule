@@ -1,22 +1,23 @@
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from 'lib/nextauth'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { Tournament } from '@prisma/client'
+import { User } from '@prisma/client'
 import prisma from 'lib/prisma'
 import SuperJSON from 'superjson'
 import { GetServerSidePropsContext } from 'next'
 
-export default function EditTournamentPage({ name, shortKey, active, id }: Tournament) {
-  console.log(name, shortKey, active)
-  const { register, handleSubmit, formState: { errors } } = useForm<Tournament>({
+export default function EditUserPage({ name, role, id }: User) {
+  const { register, handleSubmit, formState: { errors } } = useForm<User>({
     defaultValues: {
       name,
-      shortKey,
-      active,
+      role,
     }
   })
-  const onSubmit: SubmitHandler<Tournament> = async (payload) => {
-    const update = await fetch(`/api/admin/tournaments/${id}`, {
+  const onSubmit: SubmitHandler<User> = async (payload) => {
+    if (!!payload.role) {
+      payload.role = null
+    }
+    const update = await fetch(`/api/admin/users/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -37,17 +38,19 @@ export default function EditTournamentPage({ name, shortKey, active, id }: Tourn
 
   return (
     <div>
-      edit tournament page
+      User page
       <div>
         <form onSubmit={handleSubmit(onSubmit)}>
           <label>Name</label>
-          <input type="text" {...register('name', { required: true })} />
-          <label>Key</label>
-          <input type="text" disabled pattern="^[a-z0-9]+(?:-[a-z0-9]+)*$" {...register('shortKey', { required: true })} />
-          <label>Active</label>
-          <input type="checkbox" {...register('active')} />
+          <input disabled type="text" {...register('name')} />
+          <label>Role</label>
+          <select {...register('role')}>
+            <option value="">&mdash;</option>
+            <option value="editor">Editor</option>
+            <option value="admin">Admin</option>
+          </select>
           <hr />
-          <button type="submit">Save Tournament</button>
+          <button type="submit">Save User</button>
         </form>        
       </div>
     </div>
@@ -88,17 +91,17 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
     }
   }
 
-  const id = context?.params?.id
-  const entry = await prisma.tournament.findUnique({
+  const id = context?.params?.id as string
+  const entry = await prisma.user.findUnique({
     where: {
-      id: Number(id)
+      id,
     }
   })
   if (!entry) {
     return { notFound: true }
   }
-  const { json: tournament } = SuperJSON.serialize(entry)
+  const { json: user } = SuperJSON.serialize(entry)
   return {
-    props: tournament
+    props: user
   }
 }
