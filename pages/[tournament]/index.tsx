@@ -153,28 +153,34 @@ interface Params extends ParsedUrlQuery {
 }
 
 export const getStaticProps: GetStaticProps = async (context: GetStaticPropsContext) => {
-  const { tournament } = context.params as Params
-  const races:Promise<Race[]> = await fetchCurrentRaces(tournament as string)
-  
-  const entry = await prisma.tournament.findUnique({
-    where: {
-      shortKey: tournament
+  try {
+    const { tournament } = context.params as Params
+    const races:Promise<Race[]> = await fetchCurrentRaces(tournament as string)
+    
+    const entry = await prisma.tournament.findUnique({
+      where: {
+        shortKey: tournament
+      }
+    })
+    let name = entry?.name
+    if (!name) {
+      // @ts-ignore
+      name = await getTitle(tournament as string)
     }
-  })
-  let name = entry?.name
-  if (!name) {
-    // @ts-ignore
-    name = await getTitle(tournament as string)
-  }
-  const props = {
-    initialRaces: races,
-    tournament,
-    name,
-  }
+    const props = {
+      initialRaces: races,
+      tournament,
+      name,
+    }
 
-  return {
-    props,
-    revalidate: 10,
+    return {
+      props,
+      revalidate: 10,
+    }
+  } catch (err) {
+    return {
+      notFound: true
+    }
   }
 }
 

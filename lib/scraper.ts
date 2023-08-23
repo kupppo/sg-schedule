@@ -2,7 +2,6 @@ import * as Cheerio from 'cheerio'
 import getNow from 'helpers/now'
 import { parse as parseDateTime } from 'date-fns'
 import { zonedTimeToUtc } from 'date-fns-tz'
-import MOCKS from 'data/mock-schedule.json'
 
 function cleanText(input: string) {
   return input.replace(/(\n|\t)+/g, '').trim()
@@ -73,6 +72,9 @@ function parseCellContents (
 async function getPage(tournament: string) {
   const url = new URL(`https://schedule.speedgaming.org/${tournament}/`)
   const res = await fetch(url.href)
+  if (!res.ok) {
+    throw Error(`Get Page /${tournament} ${res.status} ${res.statusText}`)
+  }
   const page = Cheerio.load(await res.text())
   return page
 }
@@ -91,11 +93,6 @@ export type TwitchChannel = {
 }
 
 export const fetchCurrentRaces: any = async (tournament: string) => {
-  const useMocks = process.env.USE_MOCKS
-  if (useMocks) {
-    return MOCKS
-  }
-
   const races: Race[] = []
   const HEADINGS = ['datetime', 'runners', 'channel', 'commentary', 'tracking']
   const page = await getPage(tournament)
