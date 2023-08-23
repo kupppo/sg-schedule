@@ -1,5 +1,8 @@
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from 'lib/nextauth'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import { Tournament } from '@prisma/client'
+import { GetServerSidePropsContext } from 'next'
 
 export default function NewTournamentPage() {
   const { register, handleSubmit, formState: { errors } } = useForm<Tournament>()
@@ -40,4 +43,43 @@ export default function NewTournamentPage() {
       </div>
     </div>
   )
+}
+
+export const getServerSideProps = async (context: GetServerSidePropsContext) => {
+  const session = await getServerSession(context.req, context.res, authOptions)
+  const allowedRoles = ['admin', 'editor']
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/login?callbackUrl=/admin',
+        permanent: false,
+      }
+    }
+  }
+
+  // @ts-ignore
+  const role = session?.user?.role
+  if (!role) {
+    // show denied
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      }
+    }
+  }
+  const notAllowed = !allowedRoles.includes(role)
+  if (notAllowed) {
+    // show denied
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      }
+    }
+  }
+
+  return {
+    props: null
+  }
 }
