@@ -59,7 +59,7 @@ export default function EditUserPage({ name, role, id }: User) {
 
 export const getServerSideProps = async (context: GetServerSidePropsContext) => {
   const session = await getServerSession(context.req, context.res, authOptions)
-  const allowedRoles = ['admin', 'editor']
+  const allowedRoles = ['admin']
   if (!session) {
     return {
       redirect: {
