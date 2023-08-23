@@ -12,24 +12,23 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@next/font": "^13.0.3",
     "@upstash/qstash": "^0.3.6",
-    "@vercel/analytics": "^1.0.1",
+    "@vercel/analytics": "^1.0.2",
     "cheerio": "^1.0.0-rc.12",
     "date-fns": "^2.29.3",
     "date-fns-tz": "^2.0.0",
-    "next": "^13.4.12",
+    "next": "^13.4.19",
     "normalize.css": "^8.0.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "swr": "^2.2.0",
+    "swr": "^2.2.1",
     "typescript": "^5.1.6"
   },
   "devDependencies": {
-    "@types/node": "^20.4.4",
-    "@types/react": "^18.2.16",
+    "@types/node": "^20.5.3",
+    "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.7",
-    "eslint": "^8.45.0",
-    "eslint-config-next": "^13.4.12"
+    "eslint": "^8.47.0",
+    "eslint-config-next": "^13.4.19"
   }
 }
