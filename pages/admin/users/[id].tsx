@@ -14,7 +14,7 @@ export default function EditUserPage({ name, role, id }: User) {
     }
   })
   const onSubmit: SubmitHandler<User> = async (payload) => {
-    if (!!payload.role) {
+    if (!payload.role) {
       payload.role = null
     }
     const update = await fetch(`/api/admin/users/${id}`, {
