@@ -46,6 +46,7 @@ export const getStaticProps: GetStaticProps = async () => {
   return {
     props: {
       tournaments,
-    }
+    },
+    revalidate: 60,
   }
 }
