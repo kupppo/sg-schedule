@@ -114,7 +114,6 @@ export const fetchCurrentRaces: any = async (tournament: string) => {
       }
     }
   })
-  console.log(races)
   return races
 }
 
