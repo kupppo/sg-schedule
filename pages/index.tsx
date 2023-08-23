@@ -1,19 +1,14 @@
+import prisma from 'lib/prisma'
 import type { GetStaticProps } from 'next'
-import { Inter } from '@next/font/google'
+import { Inter } from 'next/font/google'
 import Link from 'next/link'
-import tournamentData from 'data/tournaments.json'
+import SuperJSON from 'superjson'
+import { Tournament } from '@prisma/client'
 
 const inter = Inter({
   subsets: ['latin'],
   display: 'swap'
 })
-
-type Tournament = {
-  key: string
-  title: string
-  secondary: string
-  active: boolean
-}
 
 export default function Homepage({ tournaments = [] }: { tournaments: Tournament[] }) {
   return (
@@ -22,8 +17,8 @@ export default function Homepage({ tournaments = [] }: { tournaments: Tournament
       {tournaments.length > 0 ? (
         <ul style={{ listStyle: 'none outside none', margin: 0, padding: 0 }}>
           {tournaments.map((tournament) => (
-            <li key={tournament.key} style={{ margin: '1em 0'}}>
-              <Link href={`/${tournament.key}`}>{tournament.title}</Link>
+            <li key={tournament.shortKey} style={{ margin: '1em 0'}}>
+              <Link href={`/${tournament.shortKey}`}>{tournament.name}</Link>
             </li>
           ))}
         </ul>
@@ -35,7 +30,19 @@ export default function Homepage({ tournaments = [] }: { tournaments: Tournament
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  const tournaments = tournamentData.sort((a, b) => Number(b.active) - Number(a.active))
+  const data = await prisma.tournament.findMany({
+    orderBy: [
+      {
+        active: 'desc',
+      },
+      {
+        name: 'asc',
+      }
+    ],
+  })
+  const { json } = SuperJSON.serialize(data)
+  // @ts-ignore
+  const tournaments = json as Tournament[]
   return {
     props: {
       tournaments,

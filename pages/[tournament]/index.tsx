@@ -2,13 +2,13 @@ import Link from 'next/link'
 import { fetchCurrentRaces, getTitle, Race } from 'lib/scraper'
 import { isAfter, parseISO } from 'date-fns'
 import { format as formatDateTime, utcToZonedTime } from 'date-fns-tz'
-import { Inter } from '@next/font/google'
+import { Inter } from 'next/font/google'
 import getNow from 'helpers/now'
 import useSWR from 'swr'
 import { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from 'next'
 import { ParsedUrlQuery } from 'querystring'
-import tournaments from 'data/tournaments.json'
 import { useRouter } from 'next/router'
+import prisma from 'lib/prisma'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -18,8 +18,7 @@ const inter = Inter({
 export type TournamentPageProps = {
   initialRaces: Race[]
   tournament: string
-  title: string
-  secondary?: string
+  name: string
 }
 
 const getLocalRaceTime = (time: string, tz: string) => {
@@ -63,8 +62,7 @@ const fetcher = (url: string) =>
 export default function TournamentPage({
   initialRaces = [],
   tournament,
-  title,
-  secondary,
+  name,
 }: TournamentPageProps) {
   const router = useRouter()
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -80,7 +78,7 @@ export default function TournamentPage({
 
   return (
     <main className={`container ${inter.className}`}>
-      <h1>{title}<br />{secondary}</h1>
+      <h1>{name}</h1>
       {races.length ? (
         <table>
           <thead>
@@ -155,36 +153,43 @@ interface Params extends ParsedUrlQuery {
 }
 
 export const getStaticProps: GetStaticProps = async (context: GetStaticPropsContext) => {
-  const { tournament } = context.params as Params
-  const races:Promise<Race[]> = await fetchCurrentRaces(tournament as string)
-  
-  let data = tournaments.find(t => t.key === tournament)
-  let title = data?.title
-  if (!title) {
-    // @ts-ignore
-    title = await getTitle(tournament as string)
-  }
-  const secondary = data?.secondary || null
-  
-  const props = {
-    initialRaces: races,
-    tournament,
-    title,
-    secondary,
-  }
+  try {
+    const { tournament } = context.params as Params
+    const races:Promise<Race[]> = await fetchCurrentRaces(tournament as string)
+    
+    const entry = await prisma.tournament.findUnique({
+      where: {
+        shortKey: tournament
+      }
+    })
+    let name = entry?.name
+    if (!name) {
+      // @ts-ignore
+      name = await getTitle(tournament as string)
+    }
+    const props = {
+      initialRaces: races,
+      tournament,
+      name,
+    }
 
-  return {
-    props,
-    revalidate: 10,
+    return {
+      props,
+      revalidate: 10,
+    }
+  } catch (err) {
+    return {
+      notFound: true
+    }
   }
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
+  const tournaments = await prisma.tournament.findMany()
   const paths = tournaments.map(t => ({
     params: {
-      tournament: t.key,
-      title: t.title,
-      secondary: t.secondary
+      tournament: t.shortKey,
+      name: t.name,
     }
   }))
   return {
