@@ -148,13 +148,13 @@ export default function TournamentPage({
   )
 }
 
-interface Params extends ParsedUrlQuery {
+interface TournamentParams extends ParsedUrlQuery {
   tournament: string;
 }
 
 export const getStaticProps: GetStaticProps = async (context: GetStaticPropsContext) => {
   try {
-    const { tournament } = context.params as Params
+    const { tournament } = context.params as TournamentParams
     const races:Promise<Race[]> = await fetchCurrentRaces(tournament as string)
     
     const entry = await prisma.tournament.findUnique({

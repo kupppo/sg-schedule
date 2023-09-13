@@ -1,13 +1,13 @@
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from 'lib/nextauth'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { Tournament } from '@prisma/client'
+import { Participant } from '@prisma/client'
 import { GetServerSidePropsContext } from 'next'
 
-export default function NewTournamentPage() {
-  const { register, handleSubmit, formState: { errors } } = useForm<Tournament>()
-  const onSubmit: SubmitHandler<Tournament> = async (payload) => {
-    const update = await fetch(`/api/admin/tournaments`, {
+export default function NewParticipantPage() {
+  const { register, handleSubmit, formState: { errors } } = useForm<Participant>()
+  const onSubmit: SubmitHandler<Participant> = async (payload) => {
+    const update = await fetch(`/api/admin/participants`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -28,17 +28,12 @@ export default function NewTournamentPage() {
 
   return (
     <div>
-      new tournament page
+      new Participant page
       <div>
         <form onSubmit={handleSubmit(onSubmit)}>
           <label>Name</label>
           <input type="text" {...register('name', { required: true })} />
-          <label>Short Key</label>
-          <input type="text" pattern="^[a-z0-9]+(?:-[a-z0-9]+)*$" {...register('shortKey', { required: true })} />
-          <label>Active</label>
-          <input type="checkbox" {...register('active')} />
-          <hr />
-          <button type="submit">Create Tournament</button>
+          <button type="submit">Create Participant</button>
         </form>        
       </div>
     </div>
