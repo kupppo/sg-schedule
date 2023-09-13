@@ -8,6 +8,7 @@ import SuperJSON from 'superjson'
 import prisma from 'lib/prisma'
 import { useRouter } from 'next/router'
 import { Twitch as TwitchEmbed } from 'components/embed'
+import Link from 'next/link'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -58,7 +59,22 @@ export default function TournamentArchivePage({
   }
   return (
     <main className={`container ${inter.className}`}>
-      <h1>{race.name}</h1>
+      <nav className="breadcrumb">
+        <Link href={`/${tournament.shortKey}/archive`}>
+          {tournament.name} Archive
+        </Link>
+      </nav>
+      <header className="raceHeader">
+        <h1>{race.name}</h1>
+        <div className="contributors">
+          <h3>Commentary</h3>
+          {race.commentary.join(', ')}
+        </div>
+        <div className="contributors">
+        <h3>Tracking</h3>
+          {race.tracking}
+        </div>
+      </header>
       {race.vods && race.vods.length > 0 && race.vods?.map((vod) => {
         return (
           <TwitchEmbed key={vod.url} url={vod.url} />

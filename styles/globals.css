@@ -130,6 +130,28 @@ table tbody tr:last-child td {
   border: 0;
 }
 
+.breadcrumb {
+  display: flex;
+  margin-bottom: calc(4* var(--space));
+  font-size: 14px;
+}
+
+.raceHeader {
+  display: flex;
+  margin-bottom: var(--space);
+  gap: calc(8 * var(--space));
+}
+
+.contributors h3 {
+  margin: 0;
+  color: var(--color-mid);
+  font-weight: normal;
+  font-size: 11px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  line-height: 16px;
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
@@ -216,5 +238,19 @@ table tbody tr:last-child td {
     font-size: 16px;
     line-height: 16px;
     margin-bottom: 8px;
+  }
+
+  .embed {
+    padding-bottom: 70%;
+  }
+
+  .breadcrumb {
+    /* margin-bottom: calc(2* var(--space)); */
+  }
+
+  .raceHeader {
+    flex-direction: column;
+    margin-bottom: 0;
+    gap: calc(4* var(--space));
   }
 }

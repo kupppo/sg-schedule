@@ -136,7 +136,6 @@ export const getStaticProps: GetStaticProps = async (context: GetStaticPropsCont
     const runners = getParticipantsByRole(participants, 'runner')
     const commentary = getParticipantsByRole(participants, 'commentary')
     const tracking = getParticipantsByRole(participants, 'tracking')
-    console.log(runners)
     return {
       id,
       name,
