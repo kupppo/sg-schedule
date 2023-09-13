@@ -2,7 +2,8 @@ import { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from 'next'
 import { ParsedUrlQuery } from 'querystring'
 import { format as formatDateTime, utcToZonedTime } from 'date-fns-tz'
 import { Inter } from 'next/font/google'
-import { RaceParticipants, Tournament, VideoLink } from '@prisma/client'
+import { Tournament, VideoLink } from '@prisma/client'
+import { getParticipantsByRole } from 'helpers/participants'
 import SuperJSON from 'superjson'
 import prisma from 'lib/prisma'
 import { useRouter } from 'next/router'
@@ -104,18 +105,9 @@ export const getStaticProps: GetStaticProps = async (context: GetStaticPropsCont
   const parseRace = (race) => {
     const { id, name, scheduledAt } = race
     const participants = race.participants
-    const runners = participants
-      .filter((p: RaceParticipants) => p.role === 'runner')
-      // @ts-ignore
-      .map((p: RaceParticipants) => p.participant.name)
-    const commentary = participants
-      .filter((p: RaceParticipants) => p.role === 'commentary')
-      // @ts-ignore
-      .map((p: RaceParticipants) => p.participant.name)
-    const tracking = participants
-      .filter((p: RaceParticipants) => p.role === 'tracking')
-      // @ts-ignore
-      .map((p: RaceParticipants) => p.participant.name)
+    const runners = getParticipantsByRole(participants, 'runner')
+    const commentary = getParticipantsByRole(participants, 'commentary')
+    const tracking = getParticipantsByRole(participants, 'tracking')
     const vods = race.videos.map((v: VideoLink) => ({ provider: v.provider, url: v.url }))
     return {
       id,
