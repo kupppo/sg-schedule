@@ -58,8 +58,11 @@ export default function TournamentArchivePage({
   return (
     <main className={`container ${inter.className}`}>
       <h1>{race.name}</h1>
-      {/* @ts-ignore */}
-      <TwitchEmbed url={race?.vods[0].url} />
+      {race.vods && race.vods.length > 0 && race.vods?.map((vod) => {
+        return (
+          <TwitchEmbed key={vod.url} url={vod.url} />
+        )
+      })}
     </main>
   )
 }
