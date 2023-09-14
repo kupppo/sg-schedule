@@ -20,6 +20,10 @@ body {
   letter-spacing: -0.011em;
 }
 
+body {
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
 h1 {
   font-size: 32px;
   line-height: 32px;
