@@ -8,6 +8,7 @@ import SuperJSON from 'superjson'
 import prisma from 'lib/prisma'
 import { getParticipantsByRole } from 'helpers/participants'
 import { useRouter } from 'next/router'
+import { useMemo } from 'react'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -52,12 +53,21 @@ export default function TournamentArchivePage({
 }) {
   const router = useRouter()
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
+  const participants = useMemo(() => {
+    const allParticipants = races.map((race) => [...race.runners, ...race.commentary, ...race.tracking]).flat()
+    return [...new Set(allParticipants)]
+  }, [races])
+
   if (router.isFallback) {
     return <div>Loading...</div>
   }
+
   return (
     <main className={`container ${inter.className}`}>
       <h1>{tournament.name} Archive</h1>
+      <div>
+        Filters
+      </div>
       <table>
         <thead>
           <tr>
