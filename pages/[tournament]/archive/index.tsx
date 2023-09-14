@@ -9,6 +9,7 @@ import prisma from 'lib/prisma'
 import { getParticipantsByRole } from 'helpers/participants'
 import { useRouter } from 'next/router'
 import { useMemo } from 'react'
+import { Combobox } from 'components/combobox'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -54,8 +55,12 @@ export default function TournamentArchivePage({
   const router = useRouter()
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
   const participants = useMemo(() => {
-    const allParticipants = races.map((race) => [...race.runners, ...race.commentary, ...race.tracking]).flat()
-    return [...new Set(allParticipants)]
+    if (races.length > 0) {
+      const allParticipants = races.map((race) => [...race.runners, ...race.commentary, ...race.tracking]).flat()
+      return [...new Set(allParticipants)]
+    } else {
+      return []
+    }
   }, [races])
 
   if (router.isFallback) {
@@ -67,6 +72,7 @@ export default function TournamentArchivePage({
       <h1>{tournament.name} Archive</h1>
       <div>
         Filters
+        <Combobox options={participants} />
       </div>
       <table>
         <thead>
