@@ -55,7 +55,7 @@ export default function TournamentArchivePage({
   const router = useRouter()
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
   const participants = useMemo(() => {
-    if (races.length > 0) {
+    if (races?.length > 0) {
       const allParticipants = races.map((race) => [...race.runners, ...race.commentary, ...race.tracking]).flat()
       return [...new Set(allParticipants)]
     } else {
