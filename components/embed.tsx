@@ -22,11 +22,16 @@ export const Twitch = ({ url }: { url: string }) => {
     embedUrl.searchParams.set('time', startTime)
   }
   return (
-    <div className="embed twitch-embed">
-      <iframe
-        src={embedUrl.toString()}
-        allowFullScreen>
-      </iframe>
+    <div>
+      <div className="embed twitch-embed">
+        <iframe
+          src={embedUrl.toString()}
+          allowFullScreen>
+        </iframe>
+      </div>
+      <p style={{ fontSize: '14px' }}>
+        <a href={url} target="_blank" rel="noopenner noreferrer">{url}</a>
+      </p>
     </div>
   )
 }
