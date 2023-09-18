@@ -143,6 +143,7 @@ export const getStaticProps: GetStaticProps = async (context: GetStaticPropsCont
       tournament,
       race,
     },
+    revalidate: 3600,
   }
 }
 

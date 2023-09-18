@@ -151,6 +151,7 @@ export const getStaticProps: GetStaticProps = async (context: GetStaticPropsCont
       tournament,
       races,
     },
+    revalidate: 3600,
   }
 }
 
@@ -159,7 +160,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const paths = tournaments.map(t => ({
     params: {
       tournament: t.shortKey,
-    }
+    },
   }))
   return {
     paths,
