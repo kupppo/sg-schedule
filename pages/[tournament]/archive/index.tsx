@@ -58,43 +58,47 @@ export default function TournamentArchivePage({
   return (
     <main className={`container ${inter.className}`}>
       <h1>{tournament.name} Archive</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>Race</th>
-            <th>Commentary</th>
-            <th>Tracking</th>
-            <th>Time</th>
-          </tr>
-        </thead>
-        <tbody>
-          {races.map((race) => {
-            const scheduledAt = getLocalRaceTime(race.scheduledAt, tz)
-            return (
-              <tr key={race.id}>
-                <td className="column_players">
-                  <Label>Runners</Label>
-                  <Link href={`/${tournament.shortKey}/archive/${race.id}`}>{race.name}</Link>
-                </td>
-                <td className="column_commentary">
-                  <Label>Commentary</Label>
-                  {race.commentary.join(', ') || <Dash />}
-                </td>
-                <td className="column_tracking">
-                  <Label>Tracking</Label>
-                  {race.tracking || <Dash />}
-                </td>
-                <td className="column_time">
-                  <div className="column-inner">
-                    <Label>Time</Label>
-                    {scheduledAt}
-                  </div>
-                </td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
+      {races.length > 0 ? (
+        <table>
+          <thead>
+            <tr>
+              <th>Race</th>
+              <th>Commentary</th>
+              <th>Tracking</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            {races.map((race) => {
+              const scheduledAt = getLocalRaceTime(race.scheduledAt, tz)
+              return (
+                <tr key={race.id}>
+                  <td className="column_players">
+                    <Label>Runners</Label>
+                    <Link href={`/${tournament.shortKey}/archive/${race.id}`}>{race.name}</Link>
+                  </td>
+                  <td className="column_commentary">
+                    <Label>Commentary</Label>
+                    {race.commentary.join(', ') || <Dash />}
+                  </td>
+                  <td className="column_tracking">
+                    <Label>Tracking</Label>
+                    {race.tracking || <Dash />}
+                  </td>
+                  <td className="column_time">
+                    <div className="column-inner">
+                      <Label>Time</Label>
+                      {scheduledAt}
+                    </div>
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      ) : (
+        <p>No races found in archive</p>
+      )}
     </main>
   )
 }
@@ -115,6 +119,9 @@ export const getStaticProps: GetStaticProps = async (context: GetStaticPropsCont
   }
 
   const raceEntries = await prisma.race.findMany({
+    where: {
+      tournamentId: entry.id,
+    },
     include: {
       participants: {
         include: {
