@@ -162,6 +162,16 @@ export const getStaticProps: GetStaticProps = async (context: GetStaticPropsCont
         shortKey: tournament
       }
     })
+
+    if (!entry?.active) {
+      return {
+        redirect: {
+          destination: `/${tournament}/archive`,
+          permanent: true,
+        }
+      }
+    }
+
     let name = entry?.name
     if (!name) {
       // @ts-ignore
@@ -185,7 +195,11 @@ export const getStaticProps: GetStaticProps = async (context: GetStaticPropsCont
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const tournaments = await prisma.tournament.findMany()
+  const tournaments = await prisma.tournament.findMany({
+    where: {
+      active: true,
+    }
+  })
   const paths = tournaments.map(t => ({
     params: {
       tournament: t.shortKey,
