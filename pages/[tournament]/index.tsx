@@ -9,6 +9,7 @@ import { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from 'next'
 import { ParsedUrlQuery } from 'querystring'
 import { useRouter } from 'next/router'
 import prisma from 'lib/prisma'
+import Head from 'next/head'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -78,6 +79,9 @@ export default function TournamentPage({
 
   return (
     <main className={`container ${inter.className}`}>
+      <Head>
+        <title>{name} - SG Schedule</title>
+      </Head>
       <h1>{name}</h1>
       {races.length ? (
         <table>

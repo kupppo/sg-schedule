@@ -8,6 +8,7 @@ import SuperJSON from 'superjson'
 import prisma from 'lib/prisma'
 import { getParticipantsByRole } from 'helpers/participants'
 import { useRouter } from 'next/router'
+import Head from 'next/head'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -57,6 +58,9 @@ export default function TournamentArchivePage({
   }
   return (
     <main className={`container ${inter.className}`}>
+      <Head>
+        <title>{tournament.name} - SG Schedule</title>
+      </Head>
       <h1>{tournament.name} Archive</h1>
       {races.length > 0 ? (
         <table>

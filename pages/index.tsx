@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google'
 import Link from 'next/link'
 import SuperJSON from 'superjson'
 import { Tournament } from '@prisma/client'
+import Head from 'next/head'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -13,6 +14,9 @@ const inter = Inter({
 export default function Homepage({ tournaments = [] }: { tournaments: Tournament[] }) {
   return (
     <main className={`container ${inter.className}`}>
+      <Head>
+        <title>SG Schedule</title>
+      </Head>
       <h1>Speedgaming Schedule</h1>
       {tournaments.length > 0 ? (
         <ul style={{ listStyle: 'none outside none', margin: 0, padding: 0 }}>

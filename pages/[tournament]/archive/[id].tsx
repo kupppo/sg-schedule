@@ -9,6 +9,7 @@ import prisma from 'lib/prisma'
 import { useRouter } from 'next/router'
 import { Twitch as TwitchEmbed } from 'components/embed'
 import Link from 'next/link'
+import Head from 'next/head'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -59,6 +60,9 @@ export default function TournamentArchivePage({
   }
   return (
     <main className={`container ${inter.className}`}>
+      <Head>
+        <title>{race.name} - {tournament.name} - SG Schedule</title>
+      </Head>
       <nav className="breadcrumb">
         <Link href={`/${tournament.shortKey}/archive`}>
           {tournament.name} Archive
