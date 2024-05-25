@@ -167,7 +167,7 @@ export const getStaticProps: GetStaticProps = async (context: GetStaticPropsCont
       }
     })
 
-    if (!entry?.active) {
+    if (entry && !entry?.active) {
       return {
         redirect: {
           destination: `/${tournament}/archive`,
