@@ -4,12 +4,13 @@ import { isAfter, parseISO } from 'date-fns'
 import { format as formatDateTime, utcToZonedTime } from 'date-fns-tz'
 import { Inter } from 'next/font/google'
 import getNow from 'helpers/now'
-import useSWR from 'swr'
+import useSWR, { mutate } from 'swr'
 import { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from 'next'
 import { ParsedUrlQuery } from 'querystring'
 import { useRouter } from 'next/router'
 import prisma from 'lib/prisma'
 import Head from 'next/head'
+import { useEffect } from 'react'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -56,9 +57,21 @@ const Live = () => {
   )
 }
 
-const fetcher = (url: string) =>
-  fetch(url)
-  .then(r => r.json())
+const fetcher = ([url, from, to]: string[]) => {
+  try {
+    const apiURL = new URL(url, window.location.origin)
+    if (from) {
+      apiURL.searchParams.set('from', from)
+    }
+    if (to) {
+      apiURL.searchParams.set('to', to)
+    }
+    return fetch(apiURL.toString()).then(r => r.json())
+  } catch (err) {
+    console.error(err)
+    return []
+  }
+}
 
 export default function TournamentPage({
   initialRaces = [],
@@ -66,16 +79,26 @@ export default function TournamentPage({
   name,
 }: TournamentPageProps) {
   const router = useRouter()
+  const from = router?.query?.from || null
+  const to = router?.query?.to || null
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
-  const { data: races } = useSWR(tournament ? `/api/${tournament}/races` : null, fetcher, {
+  const { data: races, mutate: refreshRaces } = useSWR(tournament ?[ `/api/${tournament}/races`, from, to] : null, fetcher, {
     fallbackData: initialRaces,
     refreshInterval: 30000,
     revalidateOnMount: true,
   })
 
+  useEffect(() => {
+    refreshRaces()
+  }, [refreshRaces])
+
   if (router.isFallback) {
     return <p>Loading...</p>
   }
+
+  let pastRacesDate = from ? new Date(from as string) : getNow()
+  pastRacesDate.setDate(pastRacesDate.getDate() - 30)
+  const earlierRacesDate = pastRacesDate.toISOString().split('T')[0]
 
   return (
     <main className={`container ${inter.className}`}>
@@ -148,6 +171,8 @@ export default function TournamentPage({
       <footer style={{ borderTop: '1px solid #333', marginTop: '2em', paddingTop: '2em' }}>
         {/* If the races table exists, add extra margin for consistent spacing */}
         <p style={{ marginTop: races.length ? '1em' : '0' }}>
+          <Link href={`/${tournament}?from=${earlierRacesDate}`}>View older races</Link>
+          <br />
           <Link href="/">View other tournaments</Link>
         </p>
       </footer>
