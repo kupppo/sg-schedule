@@ -4,6 +4,7 @@ export type Race = {
   runners?: string[] | null
   datetime?: string | null
   channel?: TwitchChannel | null
+  title: string | null
   commentary?: string[] | null
   tracking?: string[] | null
 }
@@ -33,7 +34,7 @@ const getChannel = (channels: any[]) => {
 
 export const fetchCurrentRaces = async (tournament: string) => {
   const to = getNow()
-  to.setDate(to.getDate() + 7)
+  to.setDate(to.getDate() + 30)
   const scheduleUrl = new URL('https://speedgaming.org/api/schedule')
   scheduleUrl.searchParams.set('event', tournament)
   scheduleUrl.searchParams.set('to', to.toISOString())
@@ -49,6 +50,7 @@ export const fetchCurrentRaces = async (tournament: string) => {
       channel,
       datetime: race.when,
       runners,
+      title: race.match1.title,
       commentary: race.commentators.map((commentator: any) => commentator.displayName),
       tracking: race.trackers.map((tracker: any) => tracker.displayName)
     }

@@ -71,6 +71,7 @@ table thead th {
 table tbody td {
   padding: calc(var(--space) * 3) 0;
   border-bottom: 1px solid var(--color-fg);
+  vertical-align: top;
 }
 
 table tbody td.column_time {
@@ -97,6 +98,15 @@ table tbody tr:last-child td {
 
 .heading_live span {
   visibility: hidden;
+}
+
+.episode_title {
+  font-size: 12px;
+  display: block;
+  margin: 8px 0 0;
+  text-transform: uppercase;
+  letter-spacing: 0.1px;
+  color: var(--color-mid);
 }
 
 .live {
@@ -230,6 +240,10 @@ table tbody tr:last-child td {
     padding: 16px 0;
     width: 100%;
     border-bottom: 0;
+  }
+
+  .episode_title {
+    color: var(--color-fg);
   }
 
   .mobile-label {

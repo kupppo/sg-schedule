@@ -117,6 +117,9 @@ export default function TournamentPage({
                   <td className="column_players">
                     <Label>Players</Label>
                     {race.runners?.join(' vs ')}
+                    {race.title && (
+                      <div className="episode_title">{race.title}</div>
+                    )}
                   </td>
                   <td className="column_channel">
                     <Label>Channel</Label>
