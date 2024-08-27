@@ -5,7 +5,7 @@ export function middleware(request: NextRequest) {
   const { nextUrl } = request
   const { pathname, hostname } = nextUrl
   const isChoozo = hostname === 'choozo-schedule.vercel.app'
-  const redirectBase = 'https://sg-schedule.vercel.app'
+  const redirectBase = 'https://sg-schedule.inertia.run'
   if (isChoozo) {
     const redirectPath = (pathname === '/') ? '/choozo' : pathname
     const redirectURL = new URL(redirectPath, redirectBase)
