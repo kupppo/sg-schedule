@@ -23,23 +23,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     fetchOpts.to = new Date(to as string)
   }
   const races = await fetchRaces(fetchOpts)
-  const sortedRaces = races.sort((a, b) => {
-    if (a.datetime && !b.datetime) {
-      return 1
-    }
-    if (!a.datetime && b.datetime) {
-      return -1
-    }
-    const timeA = new Date(a.datetime!)
-    const timeB = new Date(b.datetime!)
-    if (timeA < timeB) {
-      return 1
-    }
-    if (timeA > timeB) {
-      return -1
-    }
-    return 0
-  })
+  // simply reversing works because speedgaming serves this data in ascending order
+  const sortedRaces = races.reverse()
 
   res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate')
   res.json({ races: sortedRaces })
