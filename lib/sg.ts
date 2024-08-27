@@ -1,15 +1,4 @@
-import * as Cheerio from 'cheerio'
 import getNow from 'helpers/now'
-
-async function getPage(tournament: string) {
-  const url = new URL(`https://schedule.speedgaming.org/${tournament}/`)
-  const res = await fetch(url.href)
-  if (!res.ok) {
-    throw Error(`Get Page /${tournament} ${res.status} ${res.statusText}`)
-  }
-  const page = Cheerio.load(await res.text())
-  return page
-}
 
 export type Race = {
   runners?: string[] | null
@@ -69,8 +58,14 @@ export const fetchCurrentRaces = async (tournament: string) => {
 
 export const getTitle = async (tournament: string):Promise<string|null> => {
   try {
-    const page = await getPage(tournament)
-    const title = page('h1').text().trim()
+    const url = new URL('https://speedgaming.org/api/event/')
+    url.searchParams.set('slug', tournament)
+    const data = await fetch(url.toString())
+    if (!data.ok) {
+      throw Error(`Get Title ${data.status} ${data.statusText}`)
+    }
+    const json = await data.json()
+    const title = json[0].name
     return title
   } catch (err: unknown) {
     const error = err as Error

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { fetchCurrentRaces, getTitle, Race } from 'lib/scraper'
+import { fetchCurrentRaces, getTitle, Race } from 'lib/sg'
 import { isAfter, parseISO } from 'date-fns'
 import { format as formatDateTime, utcToZonedTime } from 'date-fns-tz'
 import { Inter } from 'next/font/google'
