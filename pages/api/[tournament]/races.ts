@@ -22,10 +22,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // @ts-ignore
     fetchOpts.to = new Date(to as string)
   }
-  console.log(fetchOpts)
   const races = await fetchRaces(fetchOpts)
+  const sortedRaces = races.sort((a, b) => {
+    if (a.datetime && !b.datetime) {
+      return 1
+    }
+    if (!a.datetime && b.datetime) {
+      return -1
+    }
+    const timeA = new Date(a.datetime!)
+    const timeB = new Date(b.datetime!)
+    if (timeA < timeB) {
+      return 1
+    }
+    if (timeA > timeB) {
+      return -1
+    }
+    return 0
+  })
+
   res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate')
-  res.json(races)
+  res.json({ races: sortedRaces })
 }
 
 export const config = {
