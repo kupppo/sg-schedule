@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { fetchCurrentRaces } from 'lib/scraper'
+import { fetchCurrentRaces } from 'lib/sg'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { tournament } = req.query

@@ -17,7 +17,6 @@
     "@prisma/client": "^5.2.0",
     "@upstash/qstash": "^0.3.6",
     "@vercel/analytics": "^1.0.2",
-    "cheerio": "^1.0.0-rc.12",
     "date-fns": "^2.29.3",
     "date-fns-tz": "^2.0.0",
     "faktory-worker": "^4.5.1",

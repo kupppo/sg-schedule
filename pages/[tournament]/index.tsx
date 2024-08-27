@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { fetchCurrentRaces, getTitle, Race } from 'lib/scraper'
+import { fetchCurrentRaces, getTitle, Race } from 'lib/sg'
 import { isAfter, parseISO } from 'date-fns'
 import { format as formatDateTime, utcToZonedTime } from 'date-fns-tz'
 import { Inter } from 'next/font/google'
@@ -67,7 +67,7 @@ export default function TournamentPage({
 }: TournamentPageProps) {
   const router = useRouter()
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
-  const { data: races } = useSWR(`/api/${tournament}/races`, fetcher, {
+  const { data: races } = useSWR(tournament ? `/api/${tournament}/races` : null, fetcher, {
     fallbackData: initialRaces,
     refreshInterval: 30000,
     revalidateOnMount: true,
@@ -80,7 +80,7 @@ export default function TournamentPage({
   return (
     <main className={`container ${inter.className}`}>
       <Head>
-        <title>{name} - SG Schedule</title>
+        <title>{`${name} - SG Schedule`}</title>
       </Head>
       <h1>{name}</h1>
       {races.length ? (
@@ -117,6 +117,9 @@ export default function TournamentPage({
                   <td className="column_players">
                     <Label>Players</Label>
                     {race.runners?.join(' vs ')}
+                    {race.title && (
+                      <div className="episode_title">{race.title}</div>
+                    )}
                   </td>
                   <td className="column_channel">
                     <Label>Channel</Label>
@@ -159,8 +162,8 @@ interface TournamentParams extends ParsedUrlQuery {
 export const getStaticProps: GetStaticProps = async (context: GetStaticPropsContext) => {
   try {
     const { tournament } = context.params as TournamentParams
-    const races:Promise<Race[]> = await fetchCurrentRaces(tournament as string)
-    
+    const races: Race[] = await fetchCurrentRaces(tournament as string)
+
     const entry = await prisma.tournament.findUnique({
       where: {
         shortKey: tournament
