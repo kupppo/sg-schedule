@@ -4,12 +4,13 @@ import { isAfter, parseISO } from 'date-fns'
 import { format as formatDateTime, utcToZonedTime } from 'date-fns-tz'
 import { Inter } from 'next/font/google'
 import getNow from 'helpers/now'
-import useSWR from 'swr'
+import useSWR, { mutate } from 'swr'
 import { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from 'next'
 import { ParsedUrlQuery } from 'querystring'
 import { useRouter } from 'next/router'
 import prisma from 'lib/prisma'
 import Head from 'next/head'
+import { useEffect } from 'react'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -57,14 +58,19 @@ const Live = () => {
 }
 
 const fetcher = ([url, from, to]: string[]) => {
-  const apiURL = new URL(url)
-  if (from) {
-    apiURL.searchParams.set('from', from)
+  try {
+    const apiURL = new URL(url, window.location.origin)
+    if (from) {
+      apiURL.searchParams.set('from', from)
+    }
+    if (to) {
+      apiURL.searchParams.set('to', to)
+    }
+    return fetch(apiURL.toString()).then(r => r.json())
+  } catch (err) {
+    console.error(err)
+    return []
   }
-  if (to) {
-    apiURL.searchParams.set('to', to)
-  }
-  return fetch(apiURL.toString()).then(r => r.json())
 }
 
 export default function TournamentPage({
@@ -76,17 +82,21 @@ export default function TournamentPage({
   const from = router?.query?.from || null
   const to = router?.query?.to || null
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
-  const { data: races } = useSWR(tournament ? [`/api/${tournament}/races`, from, to] : null, fetcher, {
+  const { data: races, mutate: refreshRaces } = useSWR(tournament ?[ `/api/${tournament}/races`, from, to] : null, fetcher, {
     fallbackData: initialRaces,
     refreshInterval: 30000,
     revalidateOnMount: true,
   })
 
+  useEffect(() => {
+    refreshRaces()
+  }, [refreshRaces])
+
   if (router.isFallback) {
     return <p>Loading...</p>
   }
 
-  let pastRacesDate = getNow()
+  let pastRacesDate = from ? new Date(from as string) : getNow()
   pastRacesDate.setDate(pastRacesDate.getDate() - 30)
   const earlierRacesDate = pastRacesDate.toISOString().split('T')[0]
 
