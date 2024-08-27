@@ -1,73 +1,5 @@
 import * as Cheerio from 'cheerio'
 import getNow from 'helpers/now'
-import { parse as parseDateTime } from 'date-fns'
-import { zonedTimeToUtc } from 'date-fns-tz'
-
-function cleanText(input: string) {
-  return input.replace(/(\n|\t)+/g, '').trim()
-}
-
-function isNextYear(now: Date, origin: Date) {
-  const prevMonth = now.getMonth() > origin.getMonth()
-  if (!prevMonth) {
-    return false
-  }
-
-  return true
-}
-
-function parseCellContents (
-  contents: Cheerio.Element,
-  type: string
-): string | string[] | Date | TwitchChannel | null {
-  switch (type) {
-    case 'datetime':
-      try {
-        const value = cleanText(Cheerio.load(contents).text())
-          .replace(/\u00A0/g, ' ')
-          .trim()
-        const now = getNow()
-        const origin = parseDateTime(
-          value,
-          'EEE MMM dd, hh:mm a',
-          now
-        )
-        const time = zonedTimeToUtc(origin, 'America/New_York')
-        const nextYear = isNextYear(now, origin)
-        if (nextYear) {
-          time.setFullYear(time.getFullYear() + 1)
-        }
-        return time.toISOString()
-      } catch (err:unknown) {
-        const error = err as Error
-        console.error(error)
-        return null
-      }
-    case 'channel':
-      // const text = cleanText(Cheerio.load(contents).text())
-      // const channelName = 
-      // if (text === '?') {
-      //   return null
-      // }
-      const linkEl = Cheerio.load(contents)('a')
-      if (linkEl.length === 0) {
-        return null
-      }
-      const url = linkEl.attr('href')
-      const name = cleanText(linkEl.text())
-      return { name, url } as TwitchChannel
-    case 'runners':
-      return cleanText(Cheerio.load(contents).text()).split(' vs ')
-    case 'commentary':
-    case 'tracking':
-      return cleanText(Cheerio.load(contents).text())
-        .split(', ')
-        .map((commentator) => commentator.trim())
-        .filter((commentator) => commentator.length)
-    default:
-      return null
-  }
-}
 
 async function getPage(tournament: string) {
   const url = new URL(`https://schedule.speedgaming.org/${tournament}/`)
@@ -92,23 +24,44 @@ export type TwitchChannel = {
   url: string
 }
 
-export const fetchCurrentRaces: any = async (tournament: string) => {
-  const races: Race[] = []
-  const HEADINGS = ['datetime', 'runners', 'channel', 'commentary', 'tracking']
-  const page = await getPage(tournament)
-  page('table tbody tr').each((rowIndex, rowEl) => {
-    if (rowIndex !== 0) {
-      const row = page(rowEl)
-      const race = Object.fromEntries(HEADINGS.map((heading) => [heading, null])) as Race
-      row.children('td').each((index, cell: Cheerio.Element) => {
-        const type = HEADINGS[index] as keyof Race
-        const content = parseCellContents(cell, type)
-        // @ts-ignore
-        race[type] = content
-      })
-      if (race.runners !== null && race.datetime !== null) {
-        races.push(race)
-      }
+const getChannel = (channels: any[]) => {
+  try {
+    const channel = channels[0]
+    if (!channel) {
+      return null
+    }
+
+    return {
+      name: channel.name,
+      url: `https://twitch.tv/${channel.slug}`
+    }
+  } catch (err: unknown) {
+    const error = err as Error
+    console.error(error)
+    return null
+  }
+}
+
+export const fetchCurrentRaces = async (tournament: string) => {
+  const to = getNow()
+  to.setDate(to.getDate() + 7)
+  const scheduleUrl = new URL('https://speedgaming.org/api/schedule')
+  scheduleUrl.searchParams.set('event', tournament)
+  scheduleUrl.searchParams.set('to', to.toISOString())
+  const res = await fetch(scheduleUrl.toString())
+  if (!res.ok) {
+    throw Error(`Get Schedule ${res.status} ${res.statusText}`)
+  }
+  const schedule = await res.json()
+  const races: Race[] = schedule.filter((race: any) => race.approved).map((race: any) => {
+    const runners: string[] = race.match1.players.map((player: any) => player.displayName)
+    const channel = getChannel(race.channels)
+    return {
+      channel,
+      datetime: race.when,
+      runners,
+      commentary: race.commentators.map((commentator: any) => commentator.displayName),
+      tracking: race.trackers.map((tracker: any) => tracker.displayName)
     }
   })
   return races
