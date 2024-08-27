@@ -49,14 +49,8 @@ export const fetchRaces = async ({ from, tournament, to }: {
   if (!res.ok) {
     throw Error(`Get Schedule ${res.status} ${res.statusText}`)
   }
-  return await res.json()
-}
-
-export const fetchCurrentRaces = async (tournament: string) => {
-  const to = getNow()
-  to.setDate(to.getDate() + 30)
-  const schedule = await fetchRaces({ tournament, to })
-  const races: Race[] = schedule.filter((race: any) => race.approved).map((race: any) => {
+  const results = await res.json()
+  const races: Race[] = results.filter((race: any) => race.approved).map((race: any) => {
     const runners: string[] = race.match1.players.map((player: any) => player.displayName)
     const channel = getChannel(race.channels)
     return {
@@ -68,6 +62,13 @@ export const fetchCurrentRaces = async (tournament: string) => {
       tracking: race.trackers.map((tracker: any) => tracker.displayName)
     }
   })
+  return races
+}
+
+export const fetchCurrentRaces = async (tournament: string) => {
+  const to = getNow()
+  to.setDate(to.getDate() + 30)
+  const races = await fetchRaces({ tournament, to })
   return races
 }
 
