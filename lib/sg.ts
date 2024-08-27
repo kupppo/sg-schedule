@@ -32,17 +32,30 @@ const getChannel = (channels: any[]) => {
   }
 }
 
-export const fetchCurrentRaces = async (tournament: string) => {
-  const to = getNow()
-  to.setDate(to.getDate() + 30)
+export const fetchRaces = async ({ from, tournament, to }: {
+  tournament: string
+  from?: Date
+  to?: Date
+}) => {
   const scheduleUrl = new URL('https://speedgaming.org/api/schedule')
   scheduleUrl.searchParams.set('event', tournament)
-  scheduleUrl.searchParams.set('to', to.toISOString())
+  if (from) {
+    scheduleUrl.searchParams.set('from', from.toISOString())
+  }
+  if (to) {
+    scheduleUrl.searchParams.set('to', to.toISOString())
+  }
   const res = await fetch(scheduleUrl.toString())
   if (!res.ok) {
     throw Error(`Get Schedule ${res.status} ${res.statusText}`)
   }
-  const schedule = await res.json()
+  return await res.json()
+}
+
+export const fetchCurrentRaces = async (tournament: string) => {
+  const to = getNow()
+  to.setDate(to.getDate() + 30)
+  const schedule = await fetchRaces({ tournament, to })
   const races: Race[] = schedule.filter((race: any) => race.approved).map((race: any) => {
     const runners: string[] = race.match1.players.map((player: any) => player.displayName)
     const channel = getChannel(race.channels)
