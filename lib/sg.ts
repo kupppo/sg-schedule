@@ -51,8 +51,8 @@ export const fetchCurrentRaces = async (tournament: string) => {
       datetime: race.when,
       runners,
       title: race.match1.title,
-      commentary: race.commentators.map((commentator: any) => commentator.displayName),
-      tracking: race.trackers.map((tracker: any) => tracker.displayName)
+      commentary: race.commentators.filter((commentator: any) => commentator.approved).map((commentator: any) => commentator.displayName),
+      tracking: race.trackers.filter((tracker: any) => tracker.approved).map((tracker: any) => tracker.displayName)
     }
   })
   return races
