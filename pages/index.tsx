@@ -8,6 +8,11 @@ const inter = Inter({
   display: 'swap'
 })
 
+type Tournament = {
+  slug: string
+  name: string
+}
+
 export default function Homepage({ tournaments = [] }: { tournaments: Tournament[] }) {
   return (
     <main className={`container ${inter.className}`}>
