@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { fetchCurrentRaces, getTitle, Race } from 'lib/sg'
+import { fetchCurrentRaces, fetchTournament, getTitle, Race } from 'lib/sg'
 import { isAfter, parseISO } from 'date-fns'
 import { format as formatDateTime, utcToZonedTime } from 'date-fns-tz'
 import { Inter } from 'next/font/google'
@@ -8,7 +8,6 @@ import useSWR from 'swr'
 import { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from 'next'
 import { ParsedUrlQuery } from 'querystring'
 import { useRouter } from 'next/router'
-import prisma from 'lib/prisma'
 import Head from 'next/head'
 import now from 'helpers/now'
 
@@ -166,20 +165,7 @@ export const getStaticProps: GetStaticProps = async (context: GetStaticPropsCont
     const { tournament } = context.params as TournamentParams
     const races: Race[] = await fetchCurrentRaces(tournament as string)
 
-    const entry = await prisma.tournament.findUnique({
-      where: {
-        shortKey: tournament
-      }
-    })
-
-    if (entry && !entry?.active) {
-      return {
-        redirect: {
-          destination: `/${tournament}/archive`,
-          permanent: true,
-        }
-      }
-    }
+    const entry = await fetchTournament(tournament as string)
 
     let name = entry?.name
     if (!name) {
@@ -204,17 +190,19 @@ export const getStaticProps: GetStaticProps = async (context: GetStaticPropsCont
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const tournaments = await prisma.tournament.findMany({
-    where: {
-      active: true,
-    }
-  })
-  const paths = tournaments.map(t => ({
-    params: {
-      tournament: t.shortKey,
-      name: t.name,
-    }
-  }))
+  // const tournaments = await prisma.tournament.findMany({
+  //   where: {
+  //     active: true,
+  //   }
+  // })
+  // const paths = tournaments.map(t => ({
+  //   params: {
+  //     tournament: t.slug,
+  //     name: t.name,
+  //   }
+  // }))
+  const paths:any[] = []
+
   return {
     paths,
     fallback: true,

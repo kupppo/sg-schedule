@@ -2,7 +2,6 @@ import 'normalize.css'
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
 import { Analytics } from '@vercel/analytics/react'
-import { SessionProvider } from 'next-auth/react'
 
 export default function App({
   Component,
@@ -10,10 +9,8 @@ export default function App({
 }: AppProps) {
   return (
     <>
-      <SessionProvider session={session}>
-        <Component {...pageProps} />
-        <Analytics />
-      </SessionProvider>
+      <Component {...pageProps} />
+      <Analytics />
     </>
   )
 }

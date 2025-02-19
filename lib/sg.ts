@@ -58,6 +58,17 @@ export const fetchCurrentRaces = async (tournament: string) => {
   return races
 }
 
+export const fetchTournament = async(slug: string) => {
+  const url = new URL('https://speedgaming.org/api/event/')
+  url.searchParams.set('slug', slug)
+  const res = await fetch(url.toString())
+  if (!res.ok) {
+    throw Error(`Get Event ${res.status} ${res.statusText}`)
+  }
+  const event = await res.json()
+  return event
+}
+
 export const getTitle = async (tournament: string):Promise<string|null> => {
   try {
     const url = new URL('https://speedgaming.org/api/event/')
