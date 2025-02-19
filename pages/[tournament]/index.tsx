@@ -10,6 +10,7 @@ import { ParsedUrlQuery } from 'querystring'
 import { useRouter } from 'next/router'
 import prisma from 'lib/prisma'
 import Head from 'next/head'
+import now from 'helpers/now'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -67,6 +68,7 @@ export default function TournamentPage({
 }: TournamentPageProps) {
   const router = useRouter()
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
+  const tzDisplay = now().toLocaleString('en-US', { timeZoneName: 'short' }).split(' ').pop()
   const { data: races } = useSWR(tournament ? `/api/${tournament}/races` : null, fetcher, {
     fallbackData: initialRaces,
     refreshInterval: 30000,
@@ -87,7 +89,7 @@ export default function TournamentPage({
         <table>
           <thead>
             <tr>
-              <th>Time</th>
+              <th>Time <span style={{ display: 'inline-block', marginLeft: '4px', fontSize: '12px', letterSpacing: '0.3px', color: 'var(--color-mid)' }}>{`(${tzDisplay})`}</span></th>
               <th className="heading_live"><span>Live</span></th>
               <th>Players</th>
               <th>Channel</th>
@@ -105,7 +107,7 @@ export default function TournamentPage({
                 <tr key={i}>
                   <td className="column_time">
                     <div className="column-inner">
-                      <Label>Time</Label>
+                      <Label>Time <span style={{ display: 'inline-block', marginLeft: '2px', fontSize: '10px', letterSpacing: '0.3px', color: 'var(--color-mid)' }}>{`(${tzDisplay})`}</span></Label>
                       {time}
                     </div>
                   </td>
